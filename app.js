@@ -1,6 +1,8 @@
-const express = require('express');
+const config = require('./config');
 const https = require('https');
+const express = require('express');
 const app = express();
+
 
 app.get('/', (req, res)=>{
 	// const request = https.get('https://api.twitter.com/1.1/search/tweets.json?q=%23bf_no', res => {
@@ -12,7 +14,8 @@ app.get('/', (req, res)=>{
 	// 		console.log(body);
 	// 	});
 	// });
-	res.send('Hello world!!');
+	//console.log(config.access_token);
+	res.send('Hello world!');
 });
 
 app.listen(3000,() => {
