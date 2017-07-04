@@ -1,22 +1,15 @@
-const config = require('./config');
-const https = require('https');
 const express = require('express');
 const app = express();
 
+// public
+	app.use( '/static',express.static('public') );
 
-app.get('/', (req, res)=>{
-	// const request = https.get('https://api.twitter.com/1.1/search/tweets.json?q=%23bf_no', res => {
-	// 	let body = '';
-	// 	res.on('data',(data) => {
-	// 		body += data.toString();
-	// 	});
-	// 	res.on('end',() => {
-	// 		console.log(body);
-	// 	});
-	// });
-	//console.log(config.access_token);
-	res.send('Hello world!');
-});
+// view egine
+	app.set('view engine', 'pug');
+
+// routes
+	const mainRoutes = require('./routes');
+	app.use(mainRoutes);
 
 app.listen(3000,() => {
 	console.log('App running on 3000');
