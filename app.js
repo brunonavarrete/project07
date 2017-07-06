@@ -1,8 +1,12 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 
 // public
 	app.use( '/static',express.static('public') );
+
+// body-paser
+	app.use(bodyParser.urlencoded({extended:false}));
 
 // view egine
 	app.set('view engine', 'pug');

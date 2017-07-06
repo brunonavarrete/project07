@@ -1,0 +1,14 @@
+.app--tweet
+  if !err
+    form(action="/" method="POST")
+      .circle--fluid
+        .circle--fluid--cell.circle--fluid--primary.align-bottom.app--tweet--post
+          .app--avatar(style=`background-image: url(${info.profile_image_url})`)
+            img(src='/static/images/m-spore.png')
+          textarea#tweet-textarea.circle--textarea--input(placeholder="What's happening?" name="tweet")
+          strong#tweet-char.app--tweet--char 140
+        .circle--fluid--cell.align-bottom
+          button.button-primary Tweet
+  else
+    a.button.button-primary(href="/" style="float:right;background-color:white;color:#0c85d0;") or just return home :)
+    a.button.button-primary(href="https://twitter.com/" style="float:right;") You could visit Twitter tho...

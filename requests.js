@@ -1,87 +1,50 @@
-const https = require('https');
 const config = require('./config');
-let data = {};
-let followers = {};
-let info = {};
-let tweets = {};
+const Twit = require('twit');
+const T = new Twit({
+	consumer_key: config.consumer_key,
+	consumer_secret: config.consumer_secret,
+	access_token: config.access_token,
+	access_token_secret: config.access_token_secret
+});
+const username = config.username; // replace with username
 
-// get info
-	// user info
-		const getInfoOptions = {
-			hostname: 'api.twitter.com',
-			path: `/1.1/users/show.json?screen_name=${config.username}`,
-			headers: {
-				'Authorization': `Bearer ${config.bearer_token}`
-			},
-			method: 'GET',
-		}
-		const getInfo = https.request( getInfoOptions, getRes => {
-			let body = '';
-			getRes.on( 'data', data => {
-				body+= data.toString();
-			});
-			getRes.on( 'end', () => {
-				body =  JSON.parse(body);
-				info.name = body.name;
-				info.screen_name = body.screen_name;
-				info.profile_image_url = body.profile_image_url_https;
-				info.background_image_url = body.profile_background_image_url_https;
-				info.followers_count = body.followers_count;
-			});
-		});
-		getInfo.end();
+// variables
+	let data = {
+		info: {},
+		tweets: {},
+		dms: {},
+		friends: {}
+	};
 
-	// tweets
-		const getTweetsOptions = {
-			hostname: 'api.twitter.com',
-			path: `/1.1/statuses/user_timeline.json?screen_name=${config.username}&count=5`,
-			headers: {
-				'Authorization': `Bearer ${config.bearer_token}`
-			},
-			method: 'GET',
-		}
-		const getTweets = https.request( getTweetsOptions, getRes => {
-			let body = '';
-			getRes.on( 'data', data => {
-				body+= data.toString();
-			});
-			getRes.on( 'end', () => {
-				body =  JSON.parse(body);
-				for (var i = 0; i < body.length; i++) {
-					tweets[i] = body[i];
-				};
-				console.log(tweets[0]);
-			});
-		});
+// T functions
+// user info
+	T.get('users/show', {screen_name:username}, (err,d,res) => {
+		data.info.name = d.name;
+		data.info.screen_name = d.screen_name;
+		data.info.profile_image_url = d.profile_image_url_https;
+		data.info.background_image_url = d.profile_background_image_url_https;
+		data.info.friends_count = d.friends_count;
+	});
 
-		getTweets.end();
+// tweets
+	T.get('statuses/user_timeline', {screen_name:username,count:5}, (err,d,res) => {
+		for (let i = 0; i < d.length; i++) {
+			data.tweets[i] = d[i];
+		};
+	});
 
-	// followers
-		const getFollowersOptions = {
-			hostname: 'api.twitter.com',
-			path: `/1.1/followers/list.json?count=5&screen_name=${config.username}`,
-			headers: {
-				'Authorization': `Bearer ${config.bearer_token}`
-			},
-			method: 'GET',
-		}
-		const getFollowers = https.request( getFollowersOptions, getRes => {
-			let body = '';
-			getRes.on( 'data', data => {
-				body+= data.toString();
-			});
-			getRes.on( 'end', () => {
-				for (var i = 0; i < JSON.parse(body).users.length; i++) {
-					followers[i] = JSON.parse(body).users[i];
-				};
-			});
-		});
+// friends
+	T.get('friends/list', {screen_name:username,count:5}, (err,d,res) => {
+		for (let i = 0; i < d.users.length; i++) {
+			data.friends[i] = d.users[i];
+		};
+	});
 
-		getFollowers.end();
-
-
-data.info = info;
-data.tweets = tweets;
-data.followers = followers;
+// dms
+	T.get('direct_messages', {count:5}, (err,d,res) => {
+		for (let i = 0; i < d.length; i++) {
+			data.dms[i] = d[i];
+		};
+	});
 
 module.exports.data = data;

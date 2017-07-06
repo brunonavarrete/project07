@@ -1,0 +1,12 @@
+extends layout.pug
+block content
+  .bounds.app--body
+    .app--section--header
+        .grid-33(style='width:100%')
+            .app--section--heading
+                h2 
+                    small We're terribly sorry, something went wrong! 
+                    br
+                    i "What was it?" 
+                    | you say? Well, it seems:
+                    b(style='color:#794bc4;')  #{err.message} :(
